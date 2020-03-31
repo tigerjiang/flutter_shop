@@ -52,7 +52,7 @@ final List<Widget> tabBodies = [
               type: BottomNavigationBarType.fixed,
               items: bottomTabs,
               onTap: (index){
-
+                Provide.value<CurrentIndexProvide>(context).changeIndex(index);
               },
           ),
           body: IndexedStack(

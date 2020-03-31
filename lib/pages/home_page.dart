@@ -8,7 +8,12 @@
 
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:shop/config/string.dart';
+import '../service/http_service.dart';
+import 'dart:convert';
+
+import '../config/index.dart';
 
 class HomePage extends StatefulWidget{
 
@@ -19,9 +24,25 @@ class HomePage extends StatefulWidget{
 class _HomePageState extends State<HomePage>{
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return Center(
-      child: Text(KString.homeTitle),
+    return Scaffold(
+      backgroundColor: Color.fromRGBO(244,245,245,1.0),
+      appBar: AppBar(title: Text(KString.homeTitle),),
+      body: FutureBuilder(
+        future: request('homePageContext', formData: null),
+        builder: (context,snapshot){
+          if(snapshot.hasData){
+            var data = json.decode(snapshot.data.toString());
+            print(data);
+            return Container(
+              child: Text(''),
+            );
+          }else{
+            return Container(
+              child: Text('加载中...'),
+            );
+          }
+        },
+      ),
     );
   }
 
