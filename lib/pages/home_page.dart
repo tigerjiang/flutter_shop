@@ -50,7 +50,8 @@ class _HomePageState extends State<HomePage>
             var data = json.decode(snapshot.data.toString());
             List<Map> swiperDataList =
                 (data['data']['slides'] as List).cast(); //轮播图
-            List<Map> category = (data['data']['category'] as List).cast(); //分类
+            List<Map> navigatorList =
+                (data['data']['category'] as List).cast(); //分类
             List<Map> recommendList =
                 (data['data']['recommend'] as List).cast(); //商品推荐
             List<Map> floor1 = (data['data']['floor1'] as List).cast(); //底部商品推荐
@@ -69,7 +70,10 @@ class _HomePageState extends State<HomePage>
               ),
               child: ListView(
                 children: <Widget>[
-                  SwiperDiy(swiperDataList: swiperDataList,)
+                  SwiperDiy(
+                    swiperDataList: swiperDataList,
+                  ),
+                  TopNavigator(navigatorList: navigatorList),
                 ],
               ),
               loadMore: () async {
@@ -103,8 +107,7 @@ class SwiperDiy extends StatelessWidget {
       child: Swiper(
         itemBuilder: (BuildContext context, int index) {
           return InkWell(
-              onTap: () {
-              },
+              onTap: () {},
               child: Image.network(
                 "${swiperDataList[index]['image']}",
                 fit: BoxFit.cover,
@@ -119,4 +122,45 @@ class SwiperDiy extends StatelessWidget {
   }
 }
 
+class TopNavigator extends StatelessWidget {
+  final List navigatorList;
+  TopNavigator({Key key, this.navigatorList}) : super(key: key);
 
+  Widget _gridViewItemUi(BuildContext context, item, index) {
+    return InkWell(
+      onTap: () {
+        // 跳转到分类页面
+      },
+      child: Column(
+        children: <Widget>[
+          Image.network(item['image'], width: ScreenUtil.instance.setWidth(95)),
+          Text(item['firstCategoryName']),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (navigatorList.length > 10) {
+      navigatorList.removeRange(10, navigatorList.length);
+    }
+    var tempIndex = -1;
+    return Container(
+      color: Colors.white,
+      margin: EdgeInsets.only(top: 5.0),
+      padding: EdgeInsets.all(3.0),
+      height: ScreenUtil.instance.setHeight(320),
+      child: GridView.count(
+        //禁止滚动
+        physics: NeverScrollableScrollPhysics(),
+        crossAxisCount: 5,
+        padding: EdgeInsets.all(4.0),
+        children: navigatorList.map((item) {
+          tempIndex++;
+          return _gridViewItemUi(context, item, tempIndex);
+        }).toList(),
+      ),
+    );
+  }
+}
