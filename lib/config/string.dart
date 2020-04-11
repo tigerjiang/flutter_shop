@@ -13,4 +13,6 @@ class KString{
 
   static const String loadReadyText = '上拉加载 ...';
 
+  static const String recommentText = '商品推荐';
+
 }

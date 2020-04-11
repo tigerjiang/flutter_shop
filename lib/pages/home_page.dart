@@ -74,7 +74,9 @@ class _HomePageState extends State<HomePage>
                     swiperDataList: swiperDataList,
                   ),
                   TopNavigator(navigatorList: navigatorList),
+                  RecmmendUi(recommendList:recommendList)
                 ],
+
               ),
               loadMore: () async {
                 print('开始加载更多');
@@ -122,8 +124,10 @@ class SwiperDiy extends StatelessWidget {
   }
 }
 
+//商品分类
 class TopNavigator extends StatelessWidget {
   final List navigatorList;
+
   TopNavigator({Key key, this.navigatorList}) : super(key: key);
 
   Widget _gridViewItemUi(BuildContext context, item, index) {
@@ -160,6 +164,90 @@ class TopNavigator extends StatelessWidget {
           tempIndex++;
           return _gridViewItemUi(context, item, tempIndex);
         }).toList(),
+      ),
+    );
+  }
+}
+
+//商品分类
+class RecmmendUi extends StatelessWidget {
+  final List recommendList;
+
+  RecmmendUi({Key key, this.recommendList}) : super(key: key);
+
+  //推荐商品标题
+  Widget _titleWidget() {
+    return Container(
+      alignment: Alignment.centerLeft,
+      padding: EdgeInsets.fromLTRB(10.0, 2.0, 0, 5.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+            bottom: BorderSide(width: 0.5, color: KColor.defaultBorderColor)),
+      ),
+      child: Text(
+        KString.recommentText, //商品推荐
+        style: TextStyle(color: KColor.homeSubtitleColor),
+      ),
+    );
+  }
+
+  //商品推荐列表
+  Widget _recommendListUi(BuildContext context){
+    return Container(
+      height: ScreenUtil.instance.setHeight(280),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: recommendList.length,
+          itemBuilder: (context , index){
+            return _recommendItemUi(context, index);
+          }),
+    );
+  }
+
+  Widget _recommendItemUi(BuildContext context , index){
+    return InkWell(
+      onTap: (){},
+      child: Container(
+        width: ScreenUtil.instance.setWidth(280),
+        padding: EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(
+            left:  BorderSide(width: 0.5, color: KColor.defaultBorderColor)
+          )
+        ),
+        child: Column(
+          children: <Widget>[
+            //防止溢出
+            Expanded(
+              child: Image.network(recommendList[index]['image'], fit: BoxFit.contain,) ,
+            ),
+            Text(
+              '¥${recommendList[index]['presentPrice']}',
+              style: TextStyle(
+                color: KColor.presentPriceTextColor,
+              ),
+            ),
+            Text(
+              '¥${recommendList[index]['oriPrice']}',
+              style: KFont.oriPriceStyle,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(top: 8.0),
+      child: Column(
+        children: <Widget>[
+          _titleWidget(),
+        _recommendListUi(context),
+        ],
       ),
     );
   }
