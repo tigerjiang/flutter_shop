@@ -74,9 +74,9 @@ class _HomePageState extends State<HomePage>
                     swiperDataList: swiperDataList,
                   ),
                   TopNavigator(navigatorList: navigatorList),
-                  RecmmendUi(recommendList:recommendList)
+                  RecommendUi(recommendList: recommendList),
+                  FloorPicUi(floorPic: fp1),
                 ],
-
               ),
               loadMore: () async {
                 print('开始加载更多');
@@ -170,10 +170,10 @@ class TopNavigator extends StatelessWidget {
 }
 
 //商品分类
-class RecmmendUi extends StatelessWidget {
+class RecommendUi extends StatelessWidget {
   final List recommendList;
 
-  RecmmendUi({Key key, this.recommendList}) : super(key: key);
+  RecommendUi({Key key, this.recommendList}) : super(key: key);
 
   //推荐商品标题
   Widget _titleWidget() {
@@ -193,35 +193,37 @@ class RecmmendUi extends StatelessWidget {
   }
 
   //商品推荐列表
-  Widget _recommendListUi(BuildContext context){
+  Widget _recommendListUi(BuildContext context) {
     return Container(
       height: ScreenUtil.instance.setHeight(280),
       child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: recommendList.length,
-          itemBuilder: (context , index){
+          scrollDirection: Axis.horizontal,
+          itemCount: recommendList.length,
+          itemBuilder: (context, index) {
             return _recommendItemUi(context, index);
           }),
     );
   }
 
-  Widget _recommendItemUi(BuildContext context , index){
+  Widget _recommendItemUi(BuildContext context, index) {
     return InkWell(
-      onTap: (){},
+      onTap: () {},
       child: Container(
         width: ScreenUtil.instance.setWidth(280),
         padding: EdgeInsets.all(8.0),
         decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border(
-            left:  BorderSide(width: 0.5, color: KColor.defaultBorderColor)
-          )
-        ),
+            color: Colors.white,
+            border: Border(
+                left:
+                    BorderSide(width: 0.5, color: KColor.defaultBorderColor))),
         child: Column(
           children: <Widget>[
             //防止溢出
             Expanded(
-              child: Image.network(recommendList[index]['image'], fit: BoxFit.contain,) ,
+              child: Image.network(
+                recommendList[index]['image'],
+                fit: BoxFit.contain,
+              ),
             ),
             Text(
               '¥${recommendList[index]['presentPrice']}',
@@ -232,7 +234,7 @@ class RecmmendUi extends StatelessWidget {
             Text(
               '¥${recommendList[index]['oriPrice']}',
               style: KFont.oriPriceStyle,
-              ),
+            ),
           ],
         ),
       ),
@@ -246,8 +248,28 @@ class RecmmendUi extends StatelessWidget {
       child: Column(
         children: <Widget>[
           _titleWidget(),
-        _recommendListUi(context),
+          _recommendListUi(context),
         ],
+      ),
+    );
+  }
+}
+//商品中间的广告位
+class FloorPicUi extends StatelessWidget {
+  final Map floorPic;
+
+  FloorPicUi({Key key, this.floorPic}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(top: 10.0),
+      child: InkWell(
+        child: Image.network(
+          floorPic['PICTURE_ADDRESS'],
+          fit: BoxFit.cover,
+        ),
+        onTap: () {},
       ),
     );
   }

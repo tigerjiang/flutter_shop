@@ -6,7 +6,7 @@
  * Mail jzh2012@163.com
  */
 
-const base_url = 'http://192.168.31.148:3000/';
+const base_url = 'http://192.168.1.143:3000/';
 const servicePath = {
   'homePageContext': base_url + 'getHomePageContent', //首页数据
   'getHotGoods': base_url + 'getHotGoods', //火爆专区
