@@ -23,6 +23,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with AutomaticKeepAliveClientMixin {
+  //火爆专区分页
+  int page = 1;
+  //火爆专区数据
+  List<Map> hotGoodsList = [];
+
   //防止刷新处理，保持当前状态
   @override
   bool get wantKeepAlive => true;
@@ -77,10 +82,12 @@ class _HomePageState extends State<HomePage>
                   RecommendUi(recommendList: recommendList),
                   FloorPicUi(floorPic: fp1),
                   Floor(floor: floor1,),
+                  _hotGoods(),
                 ],
               ),
               loadMore: () async {
                 print('开始加载更多');
+                _hotGoodsFetch();
               },
             );
           } else {
@@ -89,6 +96,95 @@ class _HomePageState extends State<HomePage>
             );
           }
         },
+      ),
+    );
+  }
+
+
+  void _hotGoodsFetch(){
+    var fromPage = {'page':page};
+    request("getHotGoods",formData: fromPage).then((val){
+      var data = json.decode(val.toString());
+      List<Map> newGoodsList = (data['data'] as List).cast();
+      //设置火爆专区数据列表
+      setState(() {
+        hotGoodsList.addAll(newGoodsList);
+        page++;
+      });
+    });
+  }
+
+  //火爆专区title
+  Widget _hotTitle = Container(
+    margin: EdgeInsets.only(top: 10.0),
+    padding: EdgeInsets.all(5.0),
+    alignment: Alignment.center,
+    decoration: BoxDecoration(
+      color: Colors.white,
+      border: Border(
+        bottom: BorderSide(width: 0.5, color: KColor.defaultBorderColor),
+      )
+    ),
+    //火爆专区
+    child: Text(KString.hotTitleText, style: TextStyle(color: KColor.homeSubtitleColor),),
+  );
+  //火爆专区item
+  Widget _wrapList(){
+    if(hotGoodsList.length!=0){
+      List<Widget> listWidget = hotGoodsList.map((val){
+        return InkWell(
+          onTap: (){},
+          child: Container(
+            width: ScreenUtil.instance.setWidth(372),
+            color: Colors.white,
+            padding: EdgeInsets.all(5.0),
+            margin: EdgeInsets.only(bottom: 3.0),
+            child: Column(
+              children: <Widget>[
+                Image.network(val['image'],
+                  width : ScreenUtil.instance.setWidth(375),
+                  height: ScreenUtil.instance.setHeight(200),
+                  fit: BoxFit.cover,),
+                
+                Text(
+                  val['name'],
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: ScreenUtil.instance.setSp(26),color: KColor.presentPriceTextColor),
+                ),
+                Row(
+                  children: <Widget>[
+                    Text(
+                      '¥${val['presentPrice']}',
+                       style: TextStyle(color: KColor.presentPriceTextColor),
+                    ),
+                    Text(
+                      '¥${val['oriPrice']}',
+                      style: KFont.oriPriceStyle,
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      }).toList();
+      return Wrap(
+        spacing: 2,
+        children: listWidget,
+      );
+    }else{
+      return Text('');
+    }
+  }
+
+  Widget _hotGoods(){
+    return Container(
+      child: Column(
+        children: <Widget>[
+          _hotTitle,
+        _wrapList(),
+        ],
       ),
     );
   }
@@ -187,7 +283,7 @@ class RecommendUi extends StatelessWidget {
             bottom: BorderSide(width: 0.5, color: KColor.defaultBorderColor)),
       ),
       child: Text(
-        KString.recommentText, //商品推荐
+        KString.recommendText, //商品推荐
         style: TextStyle(color: KColor.homeSubtitleColor),
       ),
     );
