@@ -23,6 +23,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with AutomaticKeepAliveClientMixin {
+  //火爆专区分页
+  int page = 1;
+  //火爆专区数据
+  List<Map> hotGoodsList = [];
+
   //防止刷新处理，保持当前状态
   @override
   bool get wantKeepAlive => true;
@@ -76,11 +81,15 @@ class _HomePageState extends State<HomePage>
                   TopNavigator(navigatorList: navigatorList),
                   RecommendUi(recommendList: recommendList),
                   FloorPicUi(floorPic: fp1),
-                  Floor(floor: floor1,),
+                  Floor(
+                    floor: floor1,
+                  ),
+                  _hotGoods(),
                 ],
               ),
               loadMore: () async {
                 print('开始加载更多');
+                _hotGoodsFetch();
               },
             );
           } else {
@@ -89,6 +98,99 @@ class _HomePageState extends State<HomePage>
             );
           }
         },
+      ),
+    );
+  }
+
+  void _hotGoodsFetch() {
+    var fromPage = {'page': page};
+    request("getHotGoods", formData: fromPage).then((val) {
+      var data = json.decode(val.toString());
+      List<Map> newGoodsList = (data['data'] as List).cast();
+      //设置火爆专区数据列表
+      setState(() {
+        hotGoodsList.addAll(newGoodsList);
+        page++;
+      });
+    });
+  }
+
+  //火爆专区title
+  Widget _hotTitle = Container(
+    margin: EdgeInsets.only(top: 10.0),
+    padding: EdgeInsets.all(5.0),
+    alignment: Alignment.center,
+    decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          bottom: BorderSide(width: 0.5, color: KColor.defaultBorderColor),
+        )),
+    //火爆专区
+    child: Text(
+      KString.hotTitleText,
+      style: TextStyle(color: KColor.homeSubtitleColor),
+    ),
+  );
+  //火爆专区item
+  Widget _wrapList() {
+    if (hotGoodsList.length != 0) {
+      List<Widget> listWidget = hotGoodsList.map((val) {
+        return InkWell(
+          onTap: () {},
+          child: Container(
+            width: ScreenUtil.instance.setWidth(372),
+            color: Colors.white,
+            padding: EdgeInsets.all(5.0),
+            margin: EdgeInsets.only(bottom: 3.0),
+            child: Column(
+              children: <Widget>[
+                Image.network(
+                  val['image'],
+                  width: ScreenUtil.instance.setWidth(375),
+                  height: ScreenUtil.instance.setHeight(200),
+                  fit: BoxFit.cover,
+                ),
+                Text(
+                  val['name'],
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                      fontSize: ScreenUtil.instance.setSp(26),
+                      color: KColor.presentPriceTextColor),
+                ),
+                Row(
+                  children: <Widget>[
+                    Text(
+                      '¥${val['presentPrice']}',
+                      style: TextStyle(color: KColor.presentPriceTextColor),
+                    ),
+                    Text(
+                      '¥${val['oriPrice']}',
+                      style: KFont.oriPriceStyle,
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      }).toList();
+      return Wrap(
+        spacing: 2,
+        children: listWidget,
+      );
+    } else {
+      return Text('');
+    }
+  }
+
+  Widget _hotGoods() {
+    return Container(
+      child: Column(
+        children: <Widget>[
+          _hotTitle,
+          _wrapList(),
+        ],
       ),
     );
   }
@@ -187,7 +289,7 @@ class RecommendUi extends StatelessWidget {
             bottom: BorderSide(width: 0.5, color: KColor.defaultBorderColor)),
       ),
       child: Text(
-        KString.recommentText, //商品推荐
+        KString.recommendText, //商品推荐
         style: TextStyle(color: KColor.homeSubtitleColor),
       ),
     );
@@ -255,6 +357,7 @@ class RecommendUi extends StatelessWidget {
     );
   }
 }
+
 //商品中间的广告位
 class FloorPicUi extends StatelessWidget {
   final Map floorPic;
@@ -275,95 +378,108 @@ class FloorPicUi extends StatelessWidget {
     );
   }
 }
+
 //商品推荐底部
-class Floor extends StatelessWidget{
+class Floor extends StatelessWidget {
   final List floor;
 
-  Floor({Key key, this.floor}):super(key:key);
+  Floor({Key key, this.floor}) : super(key: key);
 
-  void jumpDetail(BuildContext context, goodId){
-
-  }
+  void jumpDetail(BuildContext context, goodId) {}
   @override
   Widget build(BuildContext context) {
     double width = ScreenUtil.getInstance().width;
     return Container(
       child: Row(
-       children: <Widget>[
-         //左侧商品
-         Expanded(
-           child: Column(
-            children: <Widget>[
-              //左上图
-              Container(
-                padding: EdgeInsets.only(top: 4, right: 1),
-                height: ScreenUtil.instance.setHeight(400),
-                child: InkWell(
-                  child: Image.network(this.floor[0]['image'],fit: BoxFit.cover,),
-                  onTap: (){
-                    jumpDetail(context,floor[0]['goodsId']);
-                  },
+        children: <Widget>[
+          //左侧商品
+          Expanded(
+            child: Column(
+              children: <Widget>[
+                //左上图
+                Container(
+                  padding: EdgeInsets.only(top: 4, right: 1),
+                  height: ScreenUtil.instance.setHeight(400),
+                  child: InkWell(
+                    child: Image.network(
+                      this.floor[0]['image'],
+                      fit: BoxFit.cover,
+                    ),
+                    onTap: () {
+                      jumpDetail(context, floor[0]['goodsId']);
+                    },
+                  ),
                 ),
-              ),
-              //左下图
-              Container(
-                padding: EdgeInsets.only(top: 1,right: 1),
-                height: ScreenUtil.instance.setHeight(200),
-                child: InkWell(
-                  child: Image.network(this.floor[1]['image'],fit: BoxFit.cover,),
-                  onTap: (){
-                    jumpDetail(context,floor[1]['goodsId']);
-                  },
+                //左下图
+                Container(
+                  padding: EdgeInsets.only(top: 1, right: 1),
+                  height: ScreenUtil.instance.setHeight(200),
+                  child: InkWell(
+                    child: Image.network(
+                      this.floor[1]['image'],
+                      fit: BoxFit.cover,
+                    ),
+                    onTap: () {
+                      jumpDetail(context, floor[1]['goodsId']);
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
+          //右侧商品
+          Expanded(
+            child: Column(
+              children: <Widget>[
+                //右上图
+                Container(
+                  padding: EdgeInsets.only(top: 4, left: 1, bottom: 1),
+                  height: ScreenUtil.instance.setHeight(200),
+                  child: InkWell(
+                    child: Image.network(
+                      this.floor[2]['image'],
+                      fit: BoxFit.cover,
+                    ),
+                    onTap: () {
+                      jumpDetail(context, floor[2]['goodsId']);
+                    },
+                  ),
                 ),
-              )
-            ],
-           ),
-         ),
-         //右侧商品
-         Expanded(
-           child: Column(
-             children: <Widget>[
-               //右上图
-               Container(
-                 padding: EdgeInsets.only(top: 4,left: 1, bottom: 1),
-                 height: ScreenUtil.instance.setHeight(200),
-                 child: InkWell(
-                   child: Image.network(this.floor[2]['image'],fit: BoxFit.cover,),
-                   onTap: (){
-                     jumpDetail(context,floor[2]['goodsId']);
-                   },
-                 ),
-               ),
-               //右中图
-               Container(
-                 padding: EdgeInsets.only(top: 1,left: 1),
-                 height: ScreenUtil.instance.setHeight(200),
-                 child: InkWell(
-                   child: Image.network(this.floor[3]['image'],fit: BoxFit.cover,),
-                   onTap: (){
-                     jumpDetail(context,floor[3]['goodsId']);
-                   },
-                 ),
-               ),
-               //右下图
-               Container(
-                 padding: EdgeInsets.only(top: 1,left: 1),
-                 height: ScreenUtil.instance.setHeight(200),
-                 child: InkWell(
-                   child: Image.network(this.floor[4]['image'],fit: BoxFit.cover,),
-                   onTap: (){
-                     jumpDetail(context,floor[4]['goodsId']);
-                   },
-                 ),
-               )
-             ],
-           ),
-         )
-       ],
+                //右中图
+                Container(
+                  padding: EdgeInsets.only(top: 1, left: 1),
+                  height: ScreenUtil.instance.setHeight(200),
+                  child: InkWell(
+                    child: Image.network(
+                      this.floor[3]['image'],
+                      fit: BoxFit.cover,
+                    ),
+                    onTap: () {
+                      jumpDetail(context, floor[3]['goodsId']);
+                    },
+                  ),
+                ),
+                //右下图
+                Container(
+                  padding: EdgeInsets.only(top: 1, left: 1),
+                  height: ScreenUtil.instance.setHeight(200),
+                  child: InkWell(
+                    child: Image.network(
+                      this.floor[4]['image'],
+                      fit: BoxFit.cover,
+                    ),
+                    onTap: () {
+                      jumpDetail(context, floor[4]['goodsId']);
+                    },
+                  ),
+                )
+              ],
+            ),
+          )
+        ],
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         mainAxisSize: MainAxisSize.min,
       ),
     );
   }
-
 }

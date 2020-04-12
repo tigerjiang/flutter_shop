@@ -15,5 +15,7 @@ class KColor{
   static const Color homeSubtitleColor = Color.fromRGBO(132,95,63,1.0);//商品推荐颜色
   static const Color defaultBorderColor = Colors.black12;
   static const Color presentPriceTextColor = Color.fromRGBO(182,9,63,1.0);//商品最新价格
+  static const Color oriPriceTextColor = Colors.black26;//商品原价颜色
+
 
 }
