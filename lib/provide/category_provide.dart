@@ -11,7 +11,7 @@ import '../model/category_model.dart';
 
 //分类provide
 class CategoryProvide with ChangeNotifier {
-  List<SecondCategoryVO> categoryGoodsList = [];
+  List<SecondCategoryVO> secondCategoryList = [];
   int secondCategoryIndex = 0; //二级分类索引
   int firstCategoryIndex = 0; //一级分类索引
   String firstCategoryId = '4'; //一级分类id
@@ -28,8 +28,28 @@ class CategoryProvide with ChangeNotifier {
     notifyListeners();
   }
 
+  //获取二级分类数据
+  getSecondCategory(List<SecondCategoryVO> list, String id){
+    isNewCategory = true;
+    firstCategoryId = id;
+    secondCategoryIndex = 0;
+    page =1;
+    secondCategoryId =''; //点击一级分类时，二级分类的id清空
+    noMoreText = '';
+    SecondCategoryVO all = SecondCategoryVO();
+    all.secondCategoryId = '';
+    all.firstCategoryId = '00';
+    all.secondCategoryName = '全部';
+    all.comments = 'null';
+    secondCategoryList = [all];
+    secondCategoryList.add(all);
+    notifyListeners();
+
+  }
+
+
   //改变二类索引
-  changeSecondCategory(String id, int index){
+  changeSecondCategoryIndex(String id, int index){
     isNewCategory = true;
     secondCategoryId = id;
     secondCategoryIndex = index;
@@ -38,9 +58,20 @@ class CategoryProvide with ChangeNotifier {
     notifyListeners();
   }
 
+  //页面增加
   addPage(){
     page ++;
   }
 
+
+  //更改noMoreText
+  changeNoMoreText(String text){
+    noMoreText = text;
+    notifyListeners();
+  }
+
+  changeFalse(){
+    isNewCategory = false;
+  }
 
 }

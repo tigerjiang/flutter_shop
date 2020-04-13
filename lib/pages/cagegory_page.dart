@@ -8,7 +8,11 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provide/provide.dart';
+import 'package:shop/config/color.dart';
 import 'package:shop/config/string.dart';
+import 'package:shop/provide/category_provide.dart';
 import '../service/http_service.dart';
 import 'dart:convert';
 import '../model/category_model.dart';
@@ -48,30 +52,44 @@ class LeftCategoryNav extends StatefulWidget {
 }
 
 class LeftCategoryNavState extends State<LeftCategoryNav> {
-
   List list = [];
-  var index = 1;
+  var listIndex = 0; //索引
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    print('initState');
     _getCategory();
   }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Text('左侧分类'),
-    );
+    return Provide<CategoryProvide>(builder: (context, child, val) {
+      listIndex = val.firstCategoryIndex;
+      return Container(
+        width: ScreenUtil.instance.setWidth(180),
+        decoration: BoxDecoration(
+          border: Border(
+            right: BorderSide(width: 0.5, color: KColor.defaultBorderColor),
+          ),
+        ),
+        child: ListView.builder(
+            itemCount: list.length,
+            itemBuilder: (context, index) {
+              return Text('$index');
+            }),
+      );
+    });
   }
 
   //获取分类数据
   _getCategory() async {
-    await request('getCategory', formData:null).then((val){
+    await request('getCategory', formData: null).then((val) {
       var data = json.decode(val.toString());
       CategoryModel category = CategoryModel.fromJson(data);
       setState(() {
         list = category.data;
       });
+      Provide.value<CategoryProvide>(context)
+          .getSecondCategory(list[0].secondCategoryVO, '4');
     });
   }
 }
@@ -103,4 +121,3 @@ class CategoryGoodsState extends State<CategoryGoodSList> {
     );
   }
 }
-
