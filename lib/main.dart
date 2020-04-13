@@ -8,6 +8,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provide/provide.dart';
+import 'package:shop/provide/category_provide.dart';
 import './config/index.dart';
 import './provide/current_index_provide.dart';
 import './pages/index_page.dart';
@@ -15,8 +16,11 @@ import 'pages/index_page.dart';
 
 void main() {
   var currentIndexProvide = CurrentIndexProvide();
+  var currentCategoryProvide = CategoryProvide();
   var providers = Providers();
-  providers..provide(Provider<CurrentIndexProvide>.value(currentIndexProvide));
+  providers
+    ..provide(Provider<CategoryProvide>.value(currentCategoryProvide))
+    ..provide(Provider<CurrentIndexProvide>.value(currentIndexProvide));
 
   runApp(ProviderNode(child: MyApp(), providers: providers));
 }
