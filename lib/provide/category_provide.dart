@@ -21,20 +21,20 @@ class CategoryProvide with ChangeNotifier {
   bool isNewCategory = true;
 
   //首页点击类别时更改类标
-  changeFirstCategory(String id, int index){
+  changeFirstCategory(String id, int index) {
     firstCategoryId = id;
     firstCategoryIndex = index;
-    secondCategoryId ='';
+    secondCategoryId = '';
     notifyListeners();
   }
 
   //获取二级分类数据
-  getSecondCategory(List<SecondCategoryVO> list, String id){
+  getSecondCategory(List<SecondCategoryVO> list, String id) {
     isNewCategory = true;
     firstCategoryId = id;
     secondCategoryIndex = 0;
-    page =1;
-    secondCategoryId =''; //点击一级分类时，二级分类的id清空
+    page = 1;
+    secondCategoryId = ''; //点击一级分类时，二级分类的id清空
     noMoreText = '';
     SecondCategoryVO all = SecondCategoryVO();
     all.secondCategoryId = '';
@@ -44,12 +44,10 @@ class CategoryProvide with ChangeNotifier {
     secondCategoryList = [all];
     secondCategoryList.add(all);
     notifyListeners();
-
   }
 
-
   //改变二类索引
-  changeSecondCategoryIndex(String id, int index){
+  changeSecondCategoryIndex(String id, int index) {
     isNewCategory = true;
     secondCategoryId = id;
     secondCategoryIndex = index;
@@ -59,19 +57,17 @@ class CategoryProvide with ChangeNotifier {
   }
 
   //页面增加
-  addPage(){
-    page ++;
+  addPage() {
+    page++;
   }
 
-
   //更改noMoreText
-  changeNoMoreText(String text){
+  changeNoMoreText(String text) {
     noMoreText = text;
     notifyListeners();
   }
 
-  changeFalse(){
+  changeFalse() {
     isNewCategory = false;
   }
-
 }

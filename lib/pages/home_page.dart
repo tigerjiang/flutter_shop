@@ -9,11 +9,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provide/provide.dart';
 import 'package:shop/config/string.dart';
+import 'package:shop/model/category_model.dart';
 import '../service/http_service.dart';
 import 'dart:convert';
 
 import '../config/index.dart';
+import '../provide/category_provide.dart';
+import '../provide/current_index_provide.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 
@@ -237,6 +241,7 @@ class TopNavigator extends StatelessWidget {
     return InkWell(
       onTap: () {
         // 跳转到分类页面
+        _goCategory(context,index,item['firstCategoryId']);
       },
       child: Column(
         children: <Widget>[
@@ -269,6 +274,19 @@ class TopNavigator extends StatelessWidget {
         }).toList(),
       ),
     );
+  }
+  //跳转到分类页
+  _goCategory(context,index, categoryId) async{
+    await request('getCategory').then((val){
+      var data = json.decode(val.toString());
+      CategoryModel category = CategoryModel.fromJson(data);
+      List list = category.data;
+      List secondCategoryList = list[index].secondCategoryVO;
+      Provide.value<CategoryProvide>(context).changeFirstCategory(categoryId, index);
+      Provide.value<CategoryProvide>(context).getSecondCategory(secondCategoryList, categoryId);
+      Provide.value<CurrentIndexProvide>(context).changeIndex(1);
+    });
+
   }
 }
 

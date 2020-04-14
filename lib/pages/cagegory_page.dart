@@ -64,6 +64,7 @@ class LeftCategoryNavState extends State<LeftCategoryNav> {
   Widget build(BuildContext context) {
     return Provide<CategoryProvide>(builder: (context, child, val) {
       listIndex = val.firstCategoryIndex;
+      print('你点击了第'+listIndex.toString() + "个列表");
       return Container(
         width: ScreenUtil.instance.setWidth(180),
         decoration: BoxDecoration(
@@ -74,12 +75,44 @@ class LeftCategoryNavState extends State<LeftCategoryNav> {
         child: ListView.builder(
             itemCount: list.length,
             itemBuilder: (context, index) {
-              return Text('$index');
+              return _leftInkWell(index);
             }),
       );
     });
   }
 
+  //左侧分类
+  Widget _leftInkWell(int index){
+    bool isClick = false;
+    isClick = index == listIndex?true:false;
+    return InkWell(
+      onTap: (){
+        var firstCategoryId = list[index].firstCategoryId;
+        var secondCategoryList = list[index].secondCategoryVO;
+        Provide.value<CategoryProvide>(context).changeFirstCategory(firstCategoryId, index);
+        Provide.value<CategoryProvide>(context).getSecondCategory(secondCategoryList, firstCategoryId);
+        //TODO 获取商品列表
+      },
+      child: Container(
+        height: ScreenUtil.instance.setHeight(90),
+          padding: EdgeInsets.only(left: 5.0,top: 5.0),
+          decoration: BoxDecoration(
+          color: isClick?Color.fromRGBO(236, 238, 239, 1.0):Colors.white,
+          border: Border(
+            bottom: BorderSide(width: 1.0, color:KColor.defaultBorderColor),
+            left : BorderSide(width: 2.0, color: isClick?KColor.primaryColor:KColor.defaultBorderColor),
+          ),
+        ),
+        child: Text(
+          list[index].firstCategoryName,
+          style: TextStyle(
+            color: isClick?KColor.primaryColor:Colors.black,
+            fontSize: ScreenUtil.instance.setSp(28),
+          ),
+        ),
+      ),
+    );
+  }
   //获取分类数据
   _getCategory() async {
     await request('getCategory', formData: null).then((val) {
@@ -107,6 +140,7 @@ class RightCategoryNavState extends State<RightCategoryNav> {
     );
   }
 }
+
 
 //商品列表
 class CategoryGoodSList extends StatefulWidget {
