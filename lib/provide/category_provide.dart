@@ -6,6 +6,7 @@
  *  mail : jzh2012@163.com
  */
 
+
 import 'package:flutter/material.dart';
 import '../model/category_model.dart';
 
@@ -42,7 +43,7 @@ class CategoryProvide with ChangeNotifier {
     all.secondCategoryName = '全部';
     all.comments = 'null';
     secondCategoryList = [all];
-    secondCategoryList.add(all);
+    secondCategoryList.addAll(list);
     notifyListeners();
   }
 

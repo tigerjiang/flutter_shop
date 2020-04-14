@@ -135,8 +135,46 @@ class RightCategoryNav extends StatefulWidget {
 class RightCategoryNavState extends State<RightCategoryNav> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Text('右侧分类'),
+
+   return Provide<CategoryProvide>(builder: (context, child,categoryProvide){
+
+     return Container(
+       height: ScreenUtil.instance.setHeight(80),
+       width: ScreenUtil.instance.setWidth(570),
+       decoration: BoxDecoration(
+         color: Colors.white,
+         border: Border(
+           bottom: BorderSide(width: 1.0,color: KColor.defaultBorderColor)
+         )
+       ),
+       child: ListView.builder(
+           scrollDirection: Axis.horizontal,
+           itemCount: categoryProvide.secondCategoryList.length,
+           itemBuilder: (context ,index){
+            return _rightInkWell(index,categoryProvide.secondCategoryList[index]);
+           }),
+     );
+   });
+  }
+  //右侧二级分类
+  Widget _rightInkWell(int index , SecondCategoryVO item){
+    bool isClick = false;
+    isClick = (index == Provide.value<CategoryProvide>(context).secondCategoryIndex ?true:false);
+    return InkWell(
+      onTap: (){
+        Provide.value<CategoryProvide>(context).changeSecondCategoryIndex(item.secondCategoryId, index);
+      },
+      child: Container(
+        padding: EdgeInsets.fromLTRB(5.0, 10.0, 5.0, 10.0),
+        child: Text(
+            item.secondCategoryName,
+          style: TextStyle(
+            color: isClick?KColor.primaryColor:Colors.black,
+            fontSize: ScreenUtil.instance.setSp(28),
+
+          ),
+        ),
+      ),
     );
   }
 }
