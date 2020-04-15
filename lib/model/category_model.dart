@@ -85,7 +85,6 @@ class SecondCategoryVO {
     secondCategoryId = json['secondCategoryId'];
     firstCategoryId = json['firstCategoryId'];
     secondCategoryName = json['secondCategoryName'];
-    secondCategoryId = json['secondCategoryId'];
     comments = json['comments'];
   }
 
