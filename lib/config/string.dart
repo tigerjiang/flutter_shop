@@ -17,5 +17,15 @@ class KString{
 
   static const String hotTitleText = '火爆专区';
 
+  static const String noMoreText = '没有更多了';
+
+  static const String toBottom = '已经到底了';
+
+  static const String noMoreData = '暂时没有数据';
+
+
+
+
+
 
 }

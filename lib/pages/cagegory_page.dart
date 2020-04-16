@@ -10,8 +10,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provide/provide.dart';
 import 'package:shop/config/color.dart';
+import 'package:shop/config/font.dart';
 import 'package:shop/config/string.dart';
 import 'package:shop/model/category_goods_list_model.dart';
 import 'package:shop/provide/category_provide.dart';
@@ -258,7 +260,145 @@ class CategoryGoodsState extends State<CategoryGoodSList> {
         } catch (e) {
           print('进入页面第一次初始化${e}');
         }
+        if (data.categoryGoodsList.length > 0) {
+          return Expanded(
+            child: Container(
+              width: ScreenUtil.instance.setWidth(570),
+              child: EasyRefresh(
+                refreshFooter: ClassicsFooter(
+                  key: _footerKey,
+                  bgColor: Colors.white,
+                  textColor: KColor.refreshTextColor,
+                  moreInfoColor: KColor.refreshTextColor,
+                  showMore: true,
+                  noMoreText:
+                      Provide.value<CategoryProvide>(context).noMoreText,
+                  moreInfo: KString.loading,
+                  loadReadyText: KString.loadReadyText,
+                ),
+                child: ListView.builder(
+                    controller: scrollController,
+                    itemCount: data.categoryGoodsList.length,
+                    itemBuilder: (context, index) {
+                      return _listWidget(data.categoryGoodsList, index);
+                    }),
+                loadMore: () async {
+                  if (Provide.value<CategoryProvide>(context).noMoreText ==
+                      KString.noMoreText) {
+                    Fluttertoast.showToast(
+                        msg: KString.toBottom,
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIos: 1,
+                        backgroundColor: KColor.refreshTextColor,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                  } else {
+                    _getMoreList();
+                  }
+                },
+              ),
+            ),
+          );
+        } else {
+          //加载更多
+          return Text(KString.noMoreData);
+        }
       },
+    );
+  }
+
+  //列表项
+  Widget _listWidget(List newList, int index) {
+    return InkWell(
+      onTap: () {
+        //TODO 跳转到商品详情页
+      },
+      child: Container(
+        padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(
+            bottom: BorderSide(width: 1.0, color: KColor.defaultBorderColor),
+          ),
+        ),
+        child: Row(
+          children: <Widget>[
+            _goodsImage(newList, index),
+            Column(
+              children: <Widget>[
+                _goodsName(newList, index),
+                _goodsPrice(newList, index),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  //加载更多
+  void _getMoreList() {
+    Provide.value<CategoryProvide>(context).addPage();
+    var data = {
+      'firstCategoryId':
+          Provide.value<CategoryProvide>(context).firstCategoryId,
+      'secondCategoryId':
+          Provide.value<CategoryProvide>(context).secondCategoryId,
+      'page': Provide.value<CategoryProvide>(context).page,
+    };
+    request('getCategoryGoods', formData: data).then((val) {
+      var data = json.decode(val.toString());
+      CategoryGoodsListModel goodsList = CategoryGoodsListModel.fromJson(data);
+      if (goodsList.data == null) {
+        Provide.value<CategoryProvide>(context)
+            .changeNoMoreText(KString.noMoreText);
+      } else {
+        Provide.value<CategoryGoodsListProvide>(context)
+            .addCategoryGoodsList(goodsList.data);
+      }
+    });
+  }
+
+  //图片
+  Widget _goodsImage(List newList, int index) {
+    return Container(
+      width: ScreenUtil.instance.setWidth(200),
+      child: Image.network(newList[index].image),
+    );
+  }
+
+  //商品名称
+  Widget _goodsName(List newList, int index) {
+    return Container(
+      padding: EdgeInsets.all(5.0),
+      width: ScreenUtil.instance.setWidth(370),
+      child: Text(
+        newList[index].name,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(fontSize: ScreenUtil.instance.setSp(28)),
+      ),
+    );
+  }
+
+  //商品价格
+  Widget _goodsPrice(List newList, int index) {
+    return Container(
+      margin: EdgeInsets.only(top: 20.0),
+      width: ScreenUtil.instance.setWidth(370),
+      child: Row(
+        children: <Widget>[
+          Text(
+            '¥${newList[index].presentPrice}',
+            style: TextStyle(color: KColor.presentPriceTextColor),
+          ),
+          Text(
+            '¥${newList[index].oriPrice}',
+            style: KFont.oriPriceStyle,
+          ),
+        ],
+      ),
     );
   }
 }
