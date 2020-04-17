@@ -20,6 +20,7 @@ import '../provide/category_provide.dart';
 import '../provide/current_index_provide.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import '../routers/application.dart';
 
 class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
@@ -216,8 +217,11 @@ class SwiperDiy extends StatelessWidget {
       child: Swiper(
         itemBuilder: (BuildContext context, int index) {
           return InkWell(
-              onTap: () {},
-              child: Image.network(
+              onTap: () {
+                Application.router.navigateTo(
+                    context, '/detail?id=${swiperDataList[index]['goodsId']}');
+              },
+              child: Image.network( 
                 "${swiperDataList[index]['image']}",
                 fit: BoxFit.cover,
               ));
