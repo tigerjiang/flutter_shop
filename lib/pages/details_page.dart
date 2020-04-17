@@ -6,20 +6,48 @@
  *  mail : jzh2012@163.com
  */
 
-
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:shop/config/string.dart';
 
-class DetailsPage extends StatelessWidget{
+class DetailsPage extends StatelessWidget {
   final String goodsId;
   DetailsPage(this.goodsId);
   @override
   Widget build(BuildContext context) {
-
-    return Container(
-      child : Center(
-        child: Text('详情页面 ${goodsId}'),
-      )
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: Text(KString.detailsPageTitle),
+        ),
+        body: FutureBuilder(
+          future: _getGoodsInfo(context),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Stack(
+                children: <Widget>[
+                  ListView(
+                    children: <Widget>[],
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    child: Text('底部组件'),
+                  ),
+                ],
+              );
+            } else {
+              return Text('加载中...');
+            }
+          },
+        ),
+      ),
     );
   }
+
+  Future _getGoodsInfo(BuildContext context) async {}
 }

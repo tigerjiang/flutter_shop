@@ -221,7 +221,7 @@ class SwiperDiy extends StatelessWidget {
                 Application.router.navigateTo(
                     context, '/detail?id=${swiperDataList[index]['goodsId']}');
               },
-              child: Image.network( 
+              child: Image.network(
                 "${swiperDataList[index]['image']}",
                 fit: BoxFit.cover,
               ));

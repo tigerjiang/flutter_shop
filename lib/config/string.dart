@@ -23,6 +23,8 @@ class KString{
 
   static const String noMoreData = '暂时没有数据';
 
+  static const String detailsPageTitle = '商品详情页';
+
 
 
 

@@ -33,8 +33,8 @@ class _CategoryPageState extends State<CategoryPage> {
   Widget build(BuildContext context) {
     ScreenUtil.instance = ScreenUtil(width: 750, height: 1334)..init(context);
     return Scaffold(
+      backgroundColor: Color.fromRGBO(244, 245, 245, 1.0),
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(244, 245, 245, 1.0),
         title: Text(KString.categoryTitle),
       ),
       body: Container(
