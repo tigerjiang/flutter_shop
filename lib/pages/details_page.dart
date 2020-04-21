@@ -9,6 +9,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shop/config/string.dart';
+import 'dart:convert';
+import '../config/http_conf.dart';
+import '../service/http_service.dart';
+import '../provide/details_info_provide.dart';
+import 'package:provide/provide.dart';
 
 class DetailsPage extends StatelessWidget {
   final String goodsId;
@@ -49,5 +54,8 @@ class DetailsPage extends StatelessWidget {
     );
   }
 
-  Future _getGoodsInfo(BuildContext context) async {}
+  Future _getGoodsInfo(BuildContext context) async {
+    await Provide.value<DetailsInfoProvide>(context).getGoodsInfo(goodsId);
+    return '完成加载';
+  }
 }
